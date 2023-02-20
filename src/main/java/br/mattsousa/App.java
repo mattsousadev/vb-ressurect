@@ -7,7 +7,7 @@ public class App {
         GameCharacter bastion = new GameCharacter(Short.valueOf("10"), Short.valueOf("10"));
         GameCharacter faulkner = new GameCharacter(Short.valueOf("10"), Short.valueOf("10"));
 
-        GameCharacterController.executeAttack(bastion, faulkner);
+        GameController.executeAttack(bastion, faulkner);
 
         if (!faulkner.isAlive()) {
             System.out.println("You win");
