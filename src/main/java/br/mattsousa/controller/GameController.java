@@ -1,4 +1,4 @@
-package br.mattsousa;
+package br.mattsousa.controller;
 
 import br.mattsousa.model.GameCharacter;
 

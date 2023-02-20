@@ -1,5 +1,6 @@
 package br.mattsousa;
 
+import br.mattsousa.controller.GameController;
 import br.mattsousa.model.GameCharacter;
 
 public class App {

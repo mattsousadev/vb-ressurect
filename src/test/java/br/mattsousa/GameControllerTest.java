@@ -3,6 +3,7 @@ package br.mattsousa;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import br.mattsousa.controller.GameController;
 import br.mattsousa.model.GameCharacter;
 
 public class GameControllerTest {
