@@ -17,5 +17,19 @@ public class GameController {
         
         attacker.setExperiencePoints(increasedExperiencePoints);
         target.setLifePoints(damagedLifePoints);
-    }   
+    }
+
+    public static Float calculateHitChance(GameCharacter attacker, GameCharacter target){
+        Float output = 0.0f;
+        
+        if(attacker.getExperiencePoints() > target.getExperiencePoints()){
+            output = 0.6f;
+        }else if(attacker.getExperiencePoints() < target.getExperiencePoints()){
+            output = 0.4f;
+        }else{
+            output = 0.5f;
+        }
+
+        return output;
+    }
 }
