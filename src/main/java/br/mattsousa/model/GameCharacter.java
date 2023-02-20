@@ -14,14 +14,6 @@ public class GameCharacter {
     this.attackPoints = attackPoints;
   }
 
-  public void attack(GameCharacter target){
-    Short damagedLifePoints = Integer.valueOf(target.getLifePoints() - attackPoints).shortValue();
-    if (damagedLifePoints < 0){
-      damagedLifePoints = 0;
-    }
-    target.setLifePoints(damagedLifePoints);
-  }
-
   public Boolean isAlive(){
     return lifePoints > 0;
   }
