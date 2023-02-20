@@ -42,4 +42,16 @@ public class GameControllerTest {
 
         Assertions.assertEquals(Short.valueOf("1"), faulkner.getLifePoints());
     }
+
+    @Test
+    public void testExecuteAttack_shouldIncreaseExperiencePoints() {
+        GameCharacter bastion = new GameCharacter(Short.valueOf("10"), Short.valueOf("10"));
+        GameCharacter faulkner = new GameCharacter(Short.valueOf("10"), Short.valueOf("10"));
+
+        Integer beforeExperiencePoints = bastion.getExperiencePoints();
+        
+        GameController.executeAttack(bastion, faulkner);
+
+        Assertions.assertNotEquals(beforeExperiencePoints, bastion.getExperiencePoints());
+    }
 }
