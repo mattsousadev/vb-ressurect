@@ -7,10 +7,15 @@ public class GameController {
         if (!attacker.isAlive() || !target.isAlive()){
             return;
         }
+        
         Short damagedLifePoints = Integer.valueOf(target.getLifePoints() - attacker.getAttackPoints()).shortValue();
         if (damagedLifePoints < 0){
             damagedLifePoints = 0;
         }
+
+        Integer increasedExperiencePoints = attacker.getExperiencePoints() + 1;
+        
+        attacker.setExperiencePoints(increasedExperiencePoints);
         target.setLifePoints(damagedLifePoints);
     }   
 }
