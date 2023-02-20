@@ -54,4 +54,11 @@ public class GameControllerTest {
 
         Assertions.assertNotEquals(beforeExperiencePoints, bastion.getExperiencePoints());
     }
+
+    @Test
+    public void testCalculateHitChance_shouldGet50PercentChance() {
+        GameCharacter bastion = new GameCharacter();
+        GameCharacter faulkner = new GameCharacter();
+        Assertions.assertEquals(GameController.calculateHitChance(bastion, faulkner), Float.valueOf("0.5"));
+    }
 }
