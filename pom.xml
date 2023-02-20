@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>br.mattsousa</groupId>
+  <artifactId>vb-ressurect</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <name>vb-ressurect</name>
+
+  <properties>
+
+    <main-class>br.mattsousa.App</main-class>
+
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.7</maven.compiler.source>
+    <maven.compiler.target>1.7</maven.compiler.target>
+
+    <game.title>Vanguard Bandits Ressurect</game.title>
+    <game.version>0.0.1</game.version>
+    <game.author.name>Matheus Sousa</game.author.name>
+    <game.author.email>matheus.sousa.dev@gmail.com</game.author.email>
+  </properties>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>org.apache-extras.beanshell</groupId>
+      <artifactId>bsh</artifactId>
+      <version>2.0b6</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>5.9.2</version>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>3.2.0</version>
+        <executions>
+          <execution>
+            <id>timestamp-property</id>
+            <goals>
+              <goal>timestamp-property</goal>
+            </goals>
+            <configuration>
+              <name>build.timestamp</name>
+              <pattern>yyyy-MM-dd'T'HH:mm:ssXXX</pattern>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-clean-plugin</artifactId>
+          <version>3.1.0</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>3.0.2</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.8.0</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>3.0.0-M5</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>3.0.2</version>
+          <configuration>
+            <archive>
+                <manifest>
+                    <mainClass>${main-class}</mainClass>
+                </manifest>
+            </archive>
+        </configuration>
+        </plugin>
+        <plugin>
+          <artifactId>maven-install-plugin</artifactId>
+          <version>2.5.2</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-deploy-plugin</artifactId>
+          <version>2.8.2</version>
+        </plugin>
+
+        <plugin>
+          <artifactId>maven-site-plugin</artifactId>
+          <version>3.7.1</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-project-info-reports-plugin</artifactId>
+          <version>3.0.0</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+</project>

@@ -1,0 +1,5 @@
+Game Title: ${game.title}
+Version: ${game.version}
+Build date: ${build.timestamp}
+Author Name: ${game.author.name}
+Author E-mail: ${game.author.email}
