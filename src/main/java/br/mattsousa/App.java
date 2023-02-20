@@ -1,9 +1,8 @@
 package br.mattsousa;
 
-import java.util.Random;
-
 import br.mattsousa.controller.GameController;
 import br.mattsousa.model.GameCharacter;
+import br.mattsousa.util.ChanceUtil;
 
 public class App {
     public static void main(String[] args) throws Exception {
@@ -12,17 +11,16 @@ public class App {
 
         Float hitChance = GameController.calculateHitChance(bastion, faulkner);
         System.out.println("Hit chance: %.2f".formatted(hitChance));
-        Random random = new Random();
-        Double chance = random.nextDouble();
-        System.out.println("Chance got!: %.2f".formatted(chance));
-        if (chance <= hitChance) {
+        if (ChanceUtil.isHit(hitChance)) {
+            
             GameController.executeAttack(bastion, faulkner);
+            
             if (!faulkner.isAlive()) {
                 System.out.println("You win");
             } else {
-                System.out.println("Faulkner: %d".formatted(faulkner.getLifePoints()));
                 System.out.println("You lose");
             }
+            
         } else {
             System.out.println("Attack miss!");
         }
