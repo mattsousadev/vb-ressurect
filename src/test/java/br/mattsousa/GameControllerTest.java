@@ -30,4 +30,16 @@ public class GameControllerTest {
 
         Assertions.assertEquals(Short.valueOf("0"), faulkner.getLifePoints());
     }
+
+    @Test
+    public void testExecuteAttack_shouldNotRunIfAttackerIsNotAlive() {
+        GameCharacter bastion = new GameCharacter(Short.valueOf("0"), Short.valueOf("10"));
+        GameCharacter faulkner = new GameCharacter(Short.valueOf("1"), Short.valueOf("10"));
+
+        Assertions.assertEquals(Short.valueOf("1"), faulkner.getLifePoints());
+        
+        GameController.executeAttack(bastion, faulkner);
+
+        Assertions.assertEquals(Short.valueOf("1"), faulkner.getLifePoints());
+    }
 }
