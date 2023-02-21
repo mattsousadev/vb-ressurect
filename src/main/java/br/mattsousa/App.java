@@ -13,8 +13,8 @@ public class App {
     private static ResourceBundle messages = ResourceBundle.getBundle("message", locale);
 
     public static void main(String[] args) throws Exception {
-        GameCharacter bastion = new GameCharacter(Short.valueOf("10"), Short.valueOf("10"));
-        GameCharacter faulkner = new GameCharacter(Short.valueOf("10"), Short.valueOf("10"));
+        GameCharacter bastion = new GameCharacter("Bastion", Short.valueOf("10"), Short.valueOf("10"));
+        GameCharacter faulkner = new GameCharacter("Faulkner", Short.valueOf("10"), Short.valueOf("10"));
 
         Float hitChance = GameController.calculateHitChance(bastion, faulkner);
         System.out.println(messages.getString("hit.chance").formatted(hitChance));

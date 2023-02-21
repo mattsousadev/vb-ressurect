@@ -4,17 +4,21 @@ public class GameCharacter {
   private Short lifePoints;
   private Short attackPoints;
   private Integer experiencePoints;
+  private Byte staminaPoints;
+  private String name;
   
-  public GameCharacter() {
+  public GameCharacter(String name) {
     lifePoints = 0;
     attackPoints = 0;
     experiencePoints = 0;
+    staminaPoints = 100;
+    this.name = name;
   }
 
-  public GameCharacter(Short lifePoints, Short attackPoints) {
+  public GameCharacter(String name, Short lifePoints, Short attackPoints) {
+    this(name);
     this.lifePoints = lifePoints;
     this.attackPoints = attackPoints;
-    this.experiencePoints = 0;
   }
 
   public Boolean isAlive(){
@@ -44,5 +48,21 @@ public class GameCharacter {
   public void setExperiencePoints(Integer experiencePoints) {
     this.experiencePoints = experiencePoints;
   }
-  
+
+  public Byte getStaminaPoints() {
+    return staminaPoints;
+  }
+
+  public void setStaminaPoints(Byte staminaPoints) {
+    this.staminaPoints = staminaPoints;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
 }
