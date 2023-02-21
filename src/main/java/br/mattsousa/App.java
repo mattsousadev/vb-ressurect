@@ -35,51 +35,60 @@ public class App {
 
         heroParty.put(bastion.getName(), bastion);
         villainParty.put(faulkner.getName(), faulkner);
-        Boolean continueAttack = true;
+        Boolean willAttack = true;
         while (maxRound > 0 && !(heroParty.isEmpty() || villainParty.isEmpty())) {
+            // start turn
             System.out.println(messages.getString("battle.turn").formatted(maxRound));
-
             GameCharacter attacker = charactersSequence.poll();
+
+
+            // choose to attack or not
+            if (heroParty.containsKey(attacker.getName())) {
+                System.out.print(messages.getString("user.input.skip.attack"));
+                willAttack = !scanner.nextLine().startsWith("1");
+            } else {
+                willAttack = true;
+            }
+
+
+            // get attacker and target characters
+            HashMap<String, GameCharacter> targetParty = heroParty.containsKey(attacker.getName()) ? villainParty
+                    : heroParty;
+            GameCharacter target = targetParty.get(heroParty.containsKey(attacker.getName()) ? villainName : heroName);
 
             System.out.println(messages.getString("battle.name.and.life").formatted("Attacker", attacker.getName(),
                     attacker.getLifePoints()));
-
-            HashMap<String, GameCharacter> targetParty = heroParty.containsKey(attacker.getName()) ? villainParty
-                    : heroParty;
-
-            GameCharacter target = targetParty.get(heroParty.containsKey(attacker.getName()) ? villainName : heroName);
-
             System.out.println(messages.getString("battle.name.and.life").formatted("Target", target.getName(),
                     target.getLifePoints()));
 
-            Float hitChance = GameController.calculateHitChance(attacker, target);
-
-            System.out.println(messages.getString("hit.chance").formatted(hitChance));
-
-            if (heroParty.containsKey(attacker.getName())) {
-                System.out.print(messages.getString("user.input.skip.attack"));
-                continueAttack = !scanner.nextLine().startsWith("1");
-            } else {
-                continueAttack = true;
-            }
-
-            if (continueAttack) {
+            if (willAttack) {
+                // calculate hit chance
+                Float hitChance = GameController.calculateHitChance(attacker, target);
+                System.out.println(messages.getString("hit.chance").formatted(hitChance));
+                
+                // start attack
                 System.out.println(messages.getString("battle.attacking"));
+
+                // check if the attack hit or miss
                 if (ChanceUtil.isHit(hitChance)) {
-                    System.out.println(messages.getString("hit.hit"));
                     Integer oldExperience = attacker.getExperiencePoints();
                     GameController.executeAttack(attacker, target);
                     Integer newExperience = attacker.getExperiencePoints();
+                    
+                    // attack hitted
+                    System.out.println(messages.getString("hit.hit"));
                     System.out.println(messages.getString("battle.experience-earn").formatted(newExperience-oldExperience));
                     System.out.println(messages.getString("hit.damage").formatted(attacker.getAttackPoints()));
                 } else {
+                    //attack missed!
                     System.out.println(messages.getString("hit.miss").formatted(attacker.getName(), target.getName()));
                 }
 
             }else{
-                System.out.println("Skipping!");
+                System.out.println(messages.getString("battle.skip"));
             }
 
+            // before end turn
             if (!target.isAlive()) {
                 System.out.println(messages.getString("battle.defeated").formatted(target.getName()));
                 targetParty.remove(target.getName());
