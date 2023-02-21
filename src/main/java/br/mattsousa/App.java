@@ -32,77 +32,87 @@ public class App {
         Queue<GameCharacter> charactersSequence = new LinkedList<>();
 
         charactersSequence.add(bastion);
+        charactersSequence.add(faulkner);
 
         heroParty.put(bastion.getName(), bastion);
         villainParty.put(faulkner.getName(), faulkner);
         Boolean willAttack = true;
+        // TurnBattle turnBattle = new TurnBattle(heroParty, villainName, charactersSequence);
         while (maxRound > 0 && !(heroParty.isEmpty() || villainParty.isEmpty())) {
-            // start turn
+            // turnBattle.startTurn();
             System.out.println(messages.getString("battle.turn").formatted(maxRound));
             GameCharacter attacker = charactersSequence.poll();
-
+            charactersSequence.add(attacker);
 
             // choose to attack or not
             if (heroParty.containsKey(attacker.getName())) {
+                // if (turnBattle.isPlayerTurn()) {
                 System.out.print(messages.getString("user.input.skip.attack"));
                 willAttack = !scanner.nextLine().startsWith("1");
+                // String userInput = userController.getUserInput();
             } else {
                 willAttack = true;
             }
 
-
-            // get attacker and target characters
-            HashMap<String, GameCharacter> targetParty = heroParty.containsKey(attacker.getName()) ? villainParty
-                    : heroParty;
-            GameCharacter target = targetParty.get(heroParty.containsKey(attacker.getName()) ? villainName : heroName);
-
-            System.out.println(messages.getString("battle.name.and.life").formatted("Attacker", attacker.getName(),
-                    attacker.getLifePoints()));
-            System.out.println(messages.getString("battle.name.and.life").formatted("Target", target.getName(),
-                    target.getLifePoints()));
-
             if (willAttack) {
-                // calculate hit chance
-                Float hitChance = GameController.calculateHitChance(attacker, target);
-                System.out.println(messages.getString("hit.chance").formatted(hitChance));
+                // get target character
+                // String targetName = userController.getUserInput();
+                // HashMap<String, GameCharacter> targetParty = turnBattle.getParty(targetName);
+                // GameCharacter target = targetParty.get(targetName);
+                HashMap<String, GameCharacter> targetParty = heroParty.containsKey(attacker.getName()) ? villainParty
+                        : heroParty;
+                GameCharacter target = targetParty
+                        .get(heroParty.containsKey(attacker.getName()) ? villainName : heroName);
+
+                // turnBattle.startBattle(attacker, target, hitChance);
+                System.out.println(messages.getString("battle.name.and.life").formatted("Attacker", attacker.getName(),
+                        attacker.getLifePoints()));
+                System.out.println(messages.getString("battle.name.and.life").formatted("Target", target.getName(),
+                        target.getLifePoints()));
                 
-                // start attack
-                System.out.println(messages.getString("battle.attacking"));
+                Float hitChance = GameController.calculateHitChance(attacker, target);
+                System.out.println(messages.getString("hit.chance").formatted(hitChance*100));
 
                 // check if the attack hit or miss
-                if (ChanceUtil.isHit(hitChance)) {
+                Boolean isHit = ChanceUtil.isHit(hitChance);
+                // turnBattle.endBattle(attacker, target, isHit, experienceEarned);
+                if (isHit) {
                     Integer oldExperience = attacker.getExperiencePoints();
                     GameController.executeAttack(attacker, target);
                     Integer newExperience = attacker.getExperiencePoints();
-                    
+
                     // attack hitted
                     System.out.println(messages.getString("hit.hit"));
-                    System.out.println(messages.getString("battle.experience-earn").formatted(newExperience-oldExperience));
+                    System.out.println(
+                            messages.getString("battle.experience-earn").formatted(newExperience - oldExperience));
                     System.out.println(messages.getString("hit.damage").formatted(attacker.getAttackPoints()));
                 } else {
-                    //attack missed!
+                    // attack missed!
                     System.out.println(messages.getString("hit.miss").formatted(attacker.getName(), target.getName()));
                 }
 
-            }else{
-                System.out.println(messages.getString("battle.skip"));
-            }
-
-            // before end turn
-            if (!target.isAlive()) {
-                System.out.println(messages.getString("battle.defeated").formatted(target.getName()));
-                targetParty.remove(target.getName());
+                // before end turn
+                // turnBattle.endTurn(attacker, target)
+                if (!target.isAlive()) {
+                    System.out.println(messages.getString("battle.defeated").formatted(target.getName()));
+                    targetParty.remove(target.getName());
+                } else {
+                    charactersSequence.add(target);
+                }
             } else {
-                charactersSequence.add(target);
+                System.out.println(messages.getString("battle.skip"));
             }
 
             System.out.println();
             maxRound--;
         }
 
+        //if(turnBattle.playerWon()){
         if (heroParty.isEmpty()) {
             System.out.println(messages.getString("game.lose"));
-        } else if (villainParty.isEmpty()) {
+        }
+        //else if(turnBattle.cpuWon()) {
+        else if (villainParty.isEmpty()) {
             System.out.println(messages.getString("game.win"));
         } else {
             System.out.println(messages.getString("game.draw"));
