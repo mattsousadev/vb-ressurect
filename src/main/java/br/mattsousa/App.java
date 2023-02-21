@@ -5,17 +5,18 @@ import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Queue;
 import java.util.ResourceBundle;
-import java.util.Scanner;
 
 import br.mattsousa.controller.GameController;
 import br.mattsousa.model.GameCharacter;
+import br.mattsousa.user.SystemInUserInput;
+import br.mattsousa.user.UserInput;
 import br.mattsousa.util.ChanceUtil;
 
 public class App {
 
     private static Locale locale = Locale.getDefault();
     private static ResourceBundle messages = ResourceBundle.getBundle("message", locale);
-    private static Scanner scanner = new Scanner(System.in);
+    private static UserInput userInput = new SystemInUserInput();
 
     public static void main(String[] args) throws Exception {
         Integer maxRound = 50;
@@ -48,15 +49,15 @@ public class App {
             if (heroParty.containsKey(attacker.getName())) {
                 // if (turnBattle.isPlayerTurn()) {
                 System.out.print(messages.getString("user.input.skip.attack"));
-                willAttack = !scanner.nextLine().startsWith("1");
-                // String userInput = userController.getUserInput();
+                willAttack = !userInput.getUserInput().startsWith("1");
+                // String userInput = userInput.getUserInput();
             } else {
                 willAttack = true;
             }
 
             if (willAttack) {
                 // get target character
-                // String targetName = userController.getUserInput();
+                // String targetName = userInput.getUserInput();
                 // HashMap<String, GameCharacter> targetParty = turnBattle.getParty(targetName);
                 // GameCharacter target = targetParty.get(targetName);
                 HashMap<String, GameCharacter> targetParty = heroParty.containsKey(attacker.getName()) ? villainParty
