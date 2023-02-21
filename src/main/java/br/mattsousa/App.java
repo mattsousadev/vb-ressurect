@@ -1,16 +1,13 @@
 package br.mattsousa;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Locale;
-import java.util.Queue;
 import java.util.ResourceBundle;
 
-import br.mattsousa.controller.GameController;
+import br.mattsousa.battle.BattleLogic;
 import br.mattsousa.model.GameCharacter;
 import br.mattsousa.user.SystemInUserInput;
 import br.mattsousa.user.UserInput;
-import br.mattsousa.util.ChanceUtil;
 
 public class App {
 
@@ -30,76 +27,56 @@ public class App {
         HashMap<String, GameCharacter> heroParty = new HashMap<>();
         HashMap<String, GameCharacter> villainParty = new HashMap<>();
 
-        Queue<GameCharacter> charactersSequence = new LinkedList<>();
-
-        charactersSequence.add(bastion);
-        charactersSequence.add(faulkner);
-
         heroParty.put(bastion.getName(), bastion);
         villainParty.put(faulkner.getName(), faulkner);
         Boolean willAttack = true;
-        // TurnBattle turnBattle = new TurnBattle(heroParty, villainName, charactersSequence);
+        
+        BattleLogic turnBattle = new BattleLogic(heroParty, villainParty);
+        
         while (maxRound > 0 && !(heroParty.isEmpty() || villainParty.isEmpty())) {
-            // turnBattle.startTurn();
-            System.out.println(messages.getString("battle.turn").formatted(maxRound));
-            GameCharacter attacker = charactersSequence.poll();
-            charactersSequence.add(attacker);
+            final Integer currentMax = maxRound;
+            turnBattle.startTurn((GameCharacter current) -> {
+                System.out.println(messages.getString("battle.turn").formatted(currentMax));
+            });
 
-            // choose to attack or not
-            if (heroParty.containsKey(attacker.getName())) {
-                // if (turnBattle.isPlayerTurn()) {
+            if (turnBattle.isPlayerTurn(heroName)) {
                 System.out.print(messages.getString("user.input.skip.attack"));
                 willAttack = !userInput.getUserInput().startsWith("1");
-                // String userInput = userInput.getUserInput();
-            } else {
+            }else{
                 willAttack = true;
             }
 
             if (willAttack) {
-                // get target character
-                // String targetName = userInput.getUserInput();
-                // HashMap<String, GameCharacter> targetParty = turnBattle.getParty(targetName);
-                // GameCharacter target = targetParty.get(targetName);
-                HashMap<String, GameCharacter> targetParty = heroParty.containsKey(attacker.getName()) ? villainParty
-                        : heroParty;
-                GameCharacter target = targetParty
-                        .get(heroParty.containsKey(attacker.getName()) ? villainName : heroName);
-
-                // turnBattle.startBattle(attacker, target, hitChance);
-                System.out.println(messages.getString("battle.name.and.life").formatted("Attacker", attacker.getName(),
-                        attacker.getLifePoints()));
-                System.out.println(messages.getString("battle.name.and.life").formatted("Target", target.getName(),
-                        target.getLifePoints()));
                 
-                Float hitChance = GameController.calculateHitChance(attacker, target);
-                System.out.println(messages.getString("hit.chance").formatted(hitChance*100));
-
-                // check if the attack hit or miss
-                Boolean isHit = ChanceUtil.isHit(hitChance);
-                // turnBattle.endBattle(attacker, target, isHit, experienceEarned);
-                if (isHit) {
-                    Integer oldExperience = attacker.getExperiencePoints();
-                    GameController.executeAttack(attacker, target);
-                    Integer newExperience = attacker.getExperiencePoints();
-
-                    // attack hitted
-                    System.out.println(messages.getString("hit.hit"));
-                    System.out.println(
-                            messages.getString("battle.experience-earn").formatted(newExperience - oldExperience));
-                    System.out.println(messages.getString("hit.damage").formatted(attacker.getAttackPoints()));
-                } else {
-                    // attack missed!
-                    System.out.println(messages.getString("hit.miss").formatted(attacker.getName(), target.getName()));
-                }
-
-                // before end turn
-                // turnBattle.endTurn(attacker, target)
-                if (!target.isAlive()) {
-                    System.out.println(messages.getString("battle.defeated").formatted(target.getName()));
-                    targetParty.remove(target.getName());
-                } else {
-                    charactersSequence.add(target);
-                }
+                String targetName = turnBattle.isPlayerTurn(heroName) ? villainName : heroName;
+                
+                turnBattle.selectTarget(targetName);
+                
+                turnBattle.startBattle((GameCharacter attacker, GameCharacter target, Float hitChance) -> {
+                    System.out.println(messages.getString("battle.name.and.life").formatted("Attacker", attacker.getName(),
+                        attacker.getLifePoints()));
+                    System.out.println(messages.getString("battle.name.and.life").formatted("Target", target.getName(),
+                            target.getLifePoints()));
+                    
+                    System.out.println(messages.getString("hit.chance").formatted(hitChance*100));
+                });
+                
+                turnBattle.endBattle((GameCharacter attacker, GameCharacter target, Boolean isHit, Integer experienceEarned) -> {
+                    if(isHit){
+                        System.out.println(messages.getString("hit.hit"));
+                        System.out.println(
+                                messages.getString("battle.experience-earn").formatted(experienceEarned));
+                        System.out.println(messages.getString("hit.damage").formatted(attacker.getAttackPoints()));
+                    }else{
+                        System.out.println(messages.getString("hit.miss").formatted(attacker.getName(), target.getName()));
+                    }
+                });
+                
+                turnBattle.endTurn((GameCharacter attacker, GameCharacter target) -> {
+                    if (!target.isAlive()) {
+                        System.out.println(messages.getString("battle.defeated").formatted(target.getName()));
+                    }
+                });
             } else {
                 System.out.println(messages.getString("battle.skip"));
             }
