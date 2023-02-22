@@ -3,6 +3,8 @@ package br.mattsousa.controller;
 import br.mattsousa.model.GameCharacter;
 
 public class GameController {
+    public static final Byte STAMINA_INCREASE = Byte.valueOf("14");
+    
     public static void executeAttack(GameCharacter attacker, GameCharacter target) {
         if (!attacker.isAlive() || !target.isAlive()){
             return;

@@ -9,6 +9,7 @@ import br.mattsousa.battle.actions.EndTurnAction;
 import br.mattsousa.battle.actions.StartBattleAction;
 import br.mattsousa.battle.actions.StartTurnAction;
 import br.mattsousa.controller.GameController;
+import br.mattsousa.enums.CharacterStatus;
 import br.mattsousa.model.GameCharacter;
 import br.mattsousa.util.ChanceUtil;
 
@@ -46,6 +47,22 @@ public class BattleLogic {
     }
 
     public void startBattle(StartBattleAction startBattleAction) {
+        Byte newAttackerStamina = (byte) (current.getStaminaPoints() - current.getAttackPoints());
+        if (newAttackerStamina <= 0) {
+            newAttackerStamina = 0;
+            current.setStatus(CharacterStatus.STUNNED);
+        }
+        current.setStaminaPoints(newAttackerStamina);
+
+        if (target.getStatus() == CharacterStatus.NORMAL) {
+            Byte newTargetStamina = (byte) (target.getStaminaPoints() - 34);
+            if (newTargetStamina <= 0) {
+                newTargetStamina = 0;
+                target.setStatus(CharacterStatus.STUNNED);
+            }
+            target.setStaminaPoints(newTargetStamina);
+        }
+
         hitChance = GameController.calculateHitChance(current, target);
         startBattleAction.onStartBattle(current, target, hitChance);
         isHit = ChanceUtil.isHit(hitChance);
@@ -93,6 +110,10 @@ public class BattleLogic {
 
     public GameCharacter getCurrent() {
         return current;
+    }
+
+    public boolean currentCanPlay() {
+        return current.getStatus() == CharacterStatus.NORMAL;
     }
 
 }
