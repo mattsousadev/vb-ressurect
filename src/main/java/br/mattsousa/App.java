@@ -108,12 +108,10 @@ public class App {
             maxRound--;
         }
 
-        // if(turnBattle.playerWon()){
-        if (heroParty.isEmpty()) {
+        if(turnBattle.partyWon(villainParty)){
             System.out.println(messages.getString("game.lose"));
         }
-        // else if(turnBattle.cpuWon()) {
-        else if (villainParty.isEmpty()) {
+        else if(turnBattle.partyWon(heroParty)){
             System.out.println(messages.getString("game.win"));
         } else {
             System.out.println(messages.getString("game.draw"));

@@ -116,4 +116,11 @@ public class BattleLogic {
         return current.getStatus() == CharacterStatus.NORMAL;
     }
 
+
+    public boolean partyWon(HashMap<String, GameCharacter> party) {
+        if(party == firstParty) return firstParty.size() > 0 && secondParty.size() == 0;
+        else if (party == secondParty) return secondParty.size() > 0 && firstParty.size() == 0;
+        return false;
+    }
+
 }
