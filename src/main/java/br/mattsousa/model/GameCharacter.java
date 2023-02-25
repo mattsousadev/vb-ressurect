@@ -1,28 +1,33 @@
 package br.mattsousa.model;
 
+import java.util.ArrayList;
+
 import br.mattsousa.enums.CharacterStatus;
 
 public class GameCharacter {
-  private Short lifePoints;
-  private Short attackPoints;
-  private Integer experiencePoints;
-  private Byte staminaPoints;
+
+  public static final int AVAILABLE_ATTACKS = 3;
+
   private String name;
+  private Short lifePoints;
+  private Byte staminaPoints;
+  private Integer experiencePoints;
   private CharacterStatus status;
+  private ArrayList<Attack> attacks;
+  
   
   public GameCharacter(String name) {
     lifePoints = 0;
-    attackPoints = 0;
     experiencePoints = 0;
     staminaPoints = 100;
     this.name = name;
     this.status = CharacterStatus.NORMAL;
+    this.attacks = new ArrayList<>();
   }
 
-  public GameCharacter(String name, Short lifePoints, Short attackPoints) {
+  public GameCharacter(String name, Short lifePoints) {
     this(name);
     this.lifePoints = lifePoints;
-    this.attackPoints = attackPoints;
   }
 
   public Boolean isAlive(){
@@ -35,14 +40,6 @@ public class GameCharacter {
 
   public void setLifePoints(Short lifePoints) {
     this.lifePoints = lifePoints;
-  }
-
-  public Short getAttackPoints() {
-    return attackPoints;
-  }
-
-  public void setAttackPoints(Short attackPoints) {
-    this.attackPoints = attackPoints;
   }
 
   public Integer getExperiencePoints() {
@@ -75,6 +72,14 @@ public class GameCharacter {
 
   public void setStatus(CharacterStatus status) {
     this.status = status;
+  }
+
+  public ArrayList<Attack> getAttacks() {
+    return attacks;
+  }
+
+  public void setAttacks(ArrayList<Attack> attacks) {
+    this.attacks = attacks;
   }
 
 }

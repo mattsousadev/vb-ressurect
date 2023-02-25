@@ -6,10 +6,12 @@ import java.util.Queue;
 
 import br.mattsousa.battle.actions.EndBattleAction;
 import br.mattsousa.battle.actions.EndTurnAction;
+import br.mattsousa.battle.actions.SelectAttackAction;
 import br.mattsousa.battle.actions.StartBattleAction;
 import br.mattsousa.battle.actions.StartTurnAction;
 import br.mattsousa.controller.GameController;
 import br.mattsousa.enums.CharacterStatus;
+import br.mattsousa.model.Attack;
 import br.mattsousa.model.GameCharacter;
 import br.mattsousa.util.ChanceUtil;
 
@@ -19,6 +21,7 @@ public class BattleLogic {
     private Queue<GameCharacter> charactersSequence;
 
     private GameCharacter current;
+    private Attack selectedAttack;
     private GameCharacter target;
     private Float hitChance;
     private Boolean isHit;
@@ -46,8 +49,12 @@ public class BattleLogic {
         }
     }
 
+    public void selectAttack(SelectAttackAction action){
+        selectedAttack = action.onSelectAttack(current);
+    }
+    
     public void startBattle(StartBattleAction startBattleAction) {
-        Byte newAttackerStamina = (byte) (current.getStaminaPoints() - current.getAttackPoints());
+        Byte newAttackerStamina = (byte) (current.getStaminaPoints() - selectedAttack.getStaminaCost());
         if (newAttackerStamina <= 0) {
             newAttackerStamina = 0;
             current.setStatus(CharacterStatus.STUNNED);
@@ -64,7 +71,7 @@ public class BattleLogic {
         }
 
         hitChance = GameController.calculateHitChance(current, target);
-        startBattleAction.onStartBattle(current, target, hitChance);
+        startBattleAction.onStartBattle(current, target, selectedAttack, hitChance);
         isHit = ChanceUtil.isHit(hitChance);
     }
 
@@ -72,11 +79,11 @@ public class BattleLogic {
         Integer experienceEarned = 0;
         if (isHit) {
             Integer oldExperience = current.getExperiencePoints();
-            GameController.executeAttack(current, target);
+            GameController.executeAttack(current, target, selectedAttack);
             Integer newExperience = current.getExperiencePoints();
             experienceEarned = newExperience - oldExperience;
         }
-        action.onEndBattleAction(current, target, isHit, experienceEarned);
+        action.onEndBattleAction(current, target, selectedAttack, isHit, experienceEarned);
     }
 
     public void endTurn(EndTurnAction action) {

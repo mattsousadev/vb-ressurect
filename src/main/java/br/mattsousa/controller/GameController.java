@@ -1,16 +1,17 @@
 package br.mattsousa.controller;
 
+import br.mattsousa.model.Attack;
 import br.mattsousa.model.GameCharacter;
 
 public class GameController {
     public static final Byte STAMINA_INCREASE = Byte.valueOf("14");
     
-    public static void executeAttack(GameCharacter attacker, GameCharacter target) {
+    public static void executeAttack(GameCharacter attacker, GameCharacter target, Attack attack) {
         if (!attacker.isAlive() || !target.isAlive()){
             return;
         }
         
-        Short damagedLifePoints = Integer.valueOf(target.getLifePoints() - attacker.getAttackPoints()).shortValue();
+        Short damagedLifePoints = Integer.valueOf(target.getLifePoints() - attack.getAttackPoints()).shortValue();
         if (damagedLifePoints < 0){
             damagedLifePoints = 0;
         }

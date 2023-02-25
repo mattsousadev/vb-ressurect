@@ -7,6 +7,7 @@ import java.util.ResourceBundle;
 import br.mattsousa.battle.BattleLogic;
 import br.mattsousa.controller.GameController;
 import br.mattsousa.enums.CharacterStatus;
+import br.mattsousa.model.Attack;
 import br.mattsousa.model.GameCharacter;
 import br.mattsousa.user.SystemInUserInput;
 import br.mattsousa.user.UserInput;
@@ -23,8 +24,15 @@ public class App {
         String heroName = "Bastion";
         String villainName = "Faulkner";
 
-        GameCharacter bastion = new GameCharacter(heroName, Short.valueOf("100"), Short.valueOf("32"));
-        GameCharacter faulkner = new GameCharacter(villainName, Short.valueOf("90"), Short.valueOf("10"));
+        Attack slash = new Attack("Slash", Short.valueOf("30"), Byte.valueOf("10"));
+        Attack soaringDance = new Attack("Soaring dance", Short.valueOf("90"), Byte.valueOf("90"));
+
+        GameCharacter bastion = new GameCharacter(heroName, Short.valueOf("100"));
+        GameCharacter faulkner = new GameCharacter(villainName, Short.valueOf("90"));
+
+        bastion.getAttacks().add(slash);
+        bastion.getAttacks().add(soaringDance);
+        faulkner.getAttacks().add(slash);
 
         HashMap<String, GameCharacter> heroParty = new HashMap<>();
         HashMap<String, GameCharacter> villainParty = new HashMap<>();
@@ -37,7 +45,7 @@ public class App {
 
         while (maxRound > 0 && !(heroParty.isEmpty() || villainParty.isEmpty())) {
             final Integer currentMax = maxRound;
-            
+
             turnBattle.startTurn((GameCharacter current) -> {
                 System.out.println(messages.getString("battle.turn").formatted(currentMax));
                 if (current.getStaminaPoints() == 100) {
@@ -67,25 +75,57 @@ public class App {
 
                     turnBattle.selectTarget(targetName);
 
-                    turnBattle.startBattle((GameCharacter attacker, GameCharacter target, Float hitChance) -> {
-                        System.out.println(
-                                messages.getString("battle.player-status").formatted("Attacker", attacker.getName(),
-                                        attacker.getLifePoints(), attacker.getStaminaPoints()));
-                        System.out.println(
-                                messages.getString("battle.player-status").formatted("Target", target.getName(),
-                                        target.getLifePoints(), target.getStaminaPoints()));
+                    if (turnBattle.isPlayerTurn(heroName)) {
+                        turnBattle.selectAttack(attacker -> {
+                            Attack output = null;
+                            while (true) {
+                                for (int i = 0; i < attacker.getAttacks().size(); i++) {
+                                    Attack attack = attacker.getAttacks().get(i);
+                                    System.out.println("%d - %s | AT: %d - ST: %d".formatted(
+                                            i + 1, attack.getName(), attack.getAttackPoints(),
+                                            attack.getStaminaCost()));
+                                }
+                                System.out.print("Select a attack:");
+                                String selected = userInput.getUserInput().trim();
+                                try {
+                                    Integer indexSelected = Integer.parseInt(selected) - 1;
+                                    output = attacker.getAttacks().get(indexSelected);
+                                    break;
+                                } catch (Exception e) {
+                                    System.out.println("Error on selecting. Try again.");
+                                    continue;
+                                }
+                            }
+                            return output;
+                        });
+                    }else{
+                        turnBattle.selectAttack((attacker -> attacker.getAttacks().get(0)));
+                    }
 
-                        System.out.println(messages.getString("hit.chance").formatted(hitChance * 100));
-                    });
+                    turnBattle.startBattle(
+                            (GameCharacter attacker, GameCharacter target, Attack selectedAttack, Float hitChance) -> {
+                                System.out.println(
+                                        messages.getString("battle.player-status").formatted("Attacker",
+                                                attacker.getName(),
+                                                attacker.getLifePoints(), attacker.getStaminaPoints()));
+                                System.out.println(
+                                        messages.getString("battle.player-status").formatted("Target", target.getName(),
+                                                target.getLifePoints(), target.getStaminaPoints()));
+
+                                System.out.println(messages.getString("hit.chance").formatted(hitChance * 100));
+                                System.out.println();
+                            });
 
                     turnBattle.endBattle(
-                            (GameCharacter attacker, GameCharacter target, Boolean isHit, Integer experienceEarned) -> {
+                            (GameCharacter attacker, GameCharacter target, Attack selectedAttack, Boolean isHit,
+                                    Integer experienceEarned) -> {
                                 if (isHit) {
                                     System.out.println(messages.getString("hit.hit"));
                                     System.out.println(
                                             messages.getString("battle.experience-earn").formatted(experienceEarned));
                                     System.out.println(
-                                            messages.getString("hit.damage").formatted(attacker.getAttackPoints()));
+                                            messages.getString("hit.damage")
+                                                    .formatted(selectedAttack.getAttackPoints()));
                                 } else {
                                     System.out.println(
                                             messages.getString("hit.miss").formatted(attacker.getName(),
@@ -108,10 +148,9 @@ public class App {
             maxRound--;
         }
 
-        if(turnBattle.partyWon(villainParty)){
+        if (turnBattle.partyWon(villainParty)) {
             System.out.println(messages.getString("game.lose"));
-        }
-        else if(turnBattle.partyWon(heroParty)){
+        } else if (turnBattle.partyWon(heroParty)) {
             System.out.println(messages.getString("game.win"));
         } else {
             System.out.println(messages.getString("game.draw"));
